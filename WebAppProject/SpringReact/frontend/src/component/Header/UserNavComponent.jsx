@@ -1,0 +1,67 @@
+import React, { Component } from 'react';
+import UserService from '../../service/UserService';
+
+class UserNavComponent extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            user: [],
+            isLoggedIn: true
+        }
+        this.openHome = this.openHome.bind(this);
+        this.openCart = this.openCart.bind(this);
+        this.openOrders = this.openOrders.bind(this);
+        this.logout = this.logout.bind(this);
+    }
+
+    componentDidMount() {
+        this.getUserDetails();
+    }
+
+    openHome() {
+        this.props.history.push('/' +localStorage.getItem("sessionId") + '/home');
+    }
+
+    openCart() {
+        this.props.history.push('/' +localStorage.getItem("sessionId") + '/cart');
+    }
+
+    openOrders() {
+        this.props.history.push('/' +localStorage.getItem("sessionId") + '/orders');
+    }
+
+    logout() {
+        UserService.logout();
+        this.props.history.push('/');
+    }
+
+    getUserDetails() {
+        UserService.getUserDetails()
+        .then(
+                response => {
+                    console.log(response.data);
+                    this.setState({user: response.data});
+                }
+        );
+    }
+
+    render() {
+        return (
+            <div className="container">
+                <table className="table">
+                    <thead>
+                        <tr>
+                            <th> <h1>Hi, {this.state.user.userName}!</h1> </th>
+                            <th> <button className="btn btn-success" value = "search" onClick = {this.openHome} > Home </button> </th>
+                            <th> <button className="btn btn-success" value = "search" onClick = {this.openCart} > My Cart </button> </th>
+                            <th> <button className="btn btn-success" value = "search" onClick = {this.openOrders} > Orders </button> </th>
+                            <th> <button className="btn btn-success" value = "search" onClick = {this.logout} > Logout </button> </th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        )
+    }
+}
+
+export default UserNavComponent;
