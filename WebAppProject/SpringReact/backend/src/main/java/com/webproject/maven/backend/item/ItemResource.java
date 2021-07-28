@@ -27,6 +27,7 @@ public class ItemResource {
   @Autowired
   private UserService userService;
 
+  //* exposes server to all origins
   @CrossOrigin(origins = { "*" })
   @GetMapping("/search")
   public List<Item> getAllItems() {
@@ -77,6 +78,7 @@ public class ItemResource {
   @CrossOrigin(origins = { "*" })
   @GetMapping("/{sessionId}/userdetails")
   public User getUserDetails(@PathVariable String sessionId) {
+    //if the token is valid
     if (userService.checkToken(sessionId)) {
       userService.updateToken(sessionId);
       return userService.getUserDetails(sessionId);
@@ -148,6 +150,21 @@ public class ItemResource {
     if (userService.checkToken(sessionId)) {
       userService.updateToken(sessionId);
       boolean isSuccessful  = (userService.removeFromCart(itemId, sessionId) != 0);
+
+      if (isSuccessful) {
+        return ResponseEntity.noContent().build();
+      }
+    }
+    userService.logout(sessionId);
+    return ResponseEntity.notFound().build();
+  }
+
+  @CrossOrigin(origins = { "*" })
+  @GetMapping("/{sessionId}/cart/remove/{itemId}/{qty}")
+  public ResponseEntity<Void> removeFromCartQty(@PathVariable String itemId, @PathVariable int qty, @PathVariable String sessionId) {
+    if (userService.checkToken(sessionId)) {
+      userService.updateToken(sessionId);
+      boolean isSuccessful  = (userService.removeFromCartQty(itemId, qty, sessionId) != 0);
 
       if (isSuccessful) {
         return ResponseEntity.noContent().build();

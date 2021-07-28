@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import '../../index.css';
 
 class HeaderNavComponent extends Component {
     constructor(props) {
@@ -26,7 +27,7 @@ class HeaderNavComponent extends Component {
                 <table className="table">
                     <thead>
                         <tr>
-                            <th> <h1>StarWars e-Merchandise: Early bird</h1> </th>
+                            <th> <h1 className="font-face-gm">StarWars e-Merchandise: <br/>Early bird</h1> </th>
                             <th> <button className="btn btn-success" value = "search" onClick = {this.openHome} > Home </button> </th>
                             <th> <button className="btn btn-success" value = "search" onClick = {this.login} > Log In </button> </th>
                             <th> <button className="btn btn-success" value = "search" onClick = {this.signup} > Sign Up </button> </th>

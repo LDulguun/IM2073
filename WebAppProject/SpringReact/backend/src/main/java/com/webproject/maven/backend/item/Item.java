@@ -40,11 +40,13 @@ public class Item {
     this.orderedDate = orderedDate;
   }
 
+  //if override equals, we must also also override hashcode
   @Override
   public int hashCode() {
     return Objects.hash(itemId, itemName, price, qty, stock, orderedDate);
   }
 
+  //this is to override the equals method to ensure object equality
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -80,7 +82,7 @@ public class Item {
     return price;
   }
 
-  public void setPrce(Double qty) {
+  public void setPrice(Double qty) {
     this.price = price;
   }  
 

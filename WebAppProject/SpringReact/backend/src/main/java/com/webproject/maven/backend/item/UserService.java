@@ -25,7 +25,7 @@ public class UserService {
   public String login(String userName, String pword) {
     String sqlStr = "SELECT * FROM users WHERE user_name = '";
     sqlStr = sqlStr + userName + "' and password = '" + pword + "';" ;
-    List<User> users = jdbcTemplate.query(sqlStr, 
+    List<User> users = jdbcTemplate.query(sqlStr,
                         (rs, rowNum) ->
                           new User(
                                 rs.getString("user_id"),
@@ -34,6 +34,8 @@ public class UserService {
                                 rs.getString("mob_num")
                           )
                         );
+    // check if user exists (i.e. list result is not empty)
+      // if exists, delete previous token associated with user and generate new token
     if (users.size() > 0) {
       sqlStr = "DELETE FROM tokens WHERE user_id = '";
       sqlStr = sqlStr + users.get(0).getUserId() + "';";
@@ -60,8 +62,13 @@ public class UserService {
   }
 
   public boolean signUp(User input, String pword){//String userName, String pword, String email, String mobNum) {
+      //Generate random userId
+        //array of bytes(8 bit signed 2's complement integer
+        //length = 24
         byte[] randomBytes = new byte[24];
+        //generate random bytes
         secureRandom.nextBytes(randomBytes);
+        //convert bytes to string
         String userId = base64Encoder.encodeToString(randomBytes);
         
         String sqlStr = "SELECT * FROM users WHERE user_name = '";
@@ -75,10 +82,11 @@ public class UserService {
                                     rs.getString("mob_num")
                               )
                             );
+        //if user already exists in database
         if (users.size() > 0) {
           return false;
         }
-
+        //if not insert into table
         sqlStr = "INSERT into users ";
         sqlStr = sqlStr + "(user_id, user_name, email, mob_num, password) VALUES ('"
                         + userId + "', '" + input.getUserName().toLowerCase() + "', '" + input.getEmail().toLowerCase() + "', '" + input.getMobNum() + "', '" + pword + "');";
@@ -104,6 +112,7 @@ public class UserService {
                         )
                       );
     System.out.println(tokens.get(0).getStamp() + "   " + (currentTime - SESSION_DURATION));
+    //timeout check(if user takes too long) or if token does not exist
     if (tokens.size() <= 0 || tokens.get(0).getStamp() < (currentTime - SESSION_DURATION)) {
       return false;
     }
@@ -111,6 +120,7 @@ public class UserService {
     return true;
   }
 
+  //update stamp of old token
   public void updateToken(String tokenValue) {
         Token newToken = generateToken();
 
@@ -119,6 +129,8 @@ public class UserService {
         jdbcTemplate.update(sqlStr);
   }
 
+  //select all items from cart table according to userId obtained from token
+    //for each item, create the item object with id and qty as constructor parameters
   public List<Item> showCart ( String tokenValue) {
     String userId = getUserIdFromToken(tokenValue);
     System.out.println(userId);
@@ -134,8 +146,10 @@ public class UserService {
   }
 
   public String addToCart(String itemId, int qty, String tokenValue) {
+    //each row in tokens table contains the sessionId and userId
     String userId = getUserIdFromToken(tokenValue);
 
+    //if current stock is more than the qty ordered
     if ((createItem(itemId, qty)).getStock() >= qty) {
       String sqlStr = "SELECT * FROM cart WHERE user_id = '";
       sqlStr = sqlStr + userId + "' and item_id = '" + itemId + "';" ;
@@ -144,11 +158,14 @@ public class UserService {
                       (rs, rowNum) ->
                                 rs.getInt("qty")
                       );
+      //if item qty in cart = 0 (i.e. cart has no item in it)
+        //then insert the item
       if (cQty.size() == 0) {
         sqlStr = "INSERT into cart ";
         sqlStr = sqlStr + "(user_id, item_id, qty) VALUES ('" + userId + "', '" + itemId + "', " + qty + ");";
         
         jdbcTemplate.update(sqlStr);
+        //if not update the qty
       } else if (cQty.get(0) != qty) {
         sqlStr = "UPDATE cart ";
         sqlStr = sqlStr + " SET qty = " + qty + " WHERE user_id = '" + userId + "' and item_id = '" + itemId + "';" ;
@@ -175,6 +192,31 @@ public class UserService {
     return qty;
   }
 
+    public int removeFromCartQty(String itemId, int qty, String tokenValue) {
+        String userId = getUserIdFromToken(tokenValue);
+
+        String sqlStr = "SELECT * FROM cart WHERE user_id = '";
+        sqlStr = sqlStr + userId + "' and item_id = " + itemId + ";" ;
+        List<Integer> bool = jdbcTemplate.query(sqlStr,
+                (rs, rowNum) ->
+                        rs.getInt("qty")
+        );
+        int check =0;
+//        if (bool.get(0) <= qty){
+//            if(bool.get(0) == qty){
+//                check = removeFromCart(itemId, tokenValue);
+//            }
+//            else{
+                sqlStr = "UPDATE cart ";
+                sqlStr = sqlStr + " SET qty = qty - " + qty + " WHERE user_id = '" + userId + "' and item_id = '" + itemId + "';" ;
+                jdbcTemplate.update(sqlStr);
+                check = 1;
+//            }
+//        }
+        return check;
+    }
+
+  //similar to showCart, shows items from orders table
   public List<Item> showOrders( String tokenValue) {
     String userId = getUserIdFromToken(tokenValue);
     String sqlStr = "SELECT * FROM orders where user_id = '";
@@ -205,6 +247,7 @@ public class UserService {
     return true;
   }
 
+  //creates item object with its info according to itemId
   public Item createItem(String itemId, int qty) {
     String sqlStr = "SELECT * FROM items WHERE item_id = '";
     sqlStr = sqlStr + itemId + "';" ;

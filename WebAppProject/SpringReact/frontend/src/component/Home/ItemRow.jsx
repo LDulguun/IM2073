@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import ItemDataService from '../../service/ItemDataService';
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import 'font-awesome/css/font-awesome.min.css';
+// import Notify from './Notify';
 
 class ItemRow extends Component {
     constructor(props) {
@@ -12,10 +16,22 @@ class ItemRow extends Component {
         this.handleQtyChange = this.handleQtyChange.bind(this);
     }
 
-    addToCartItemClicked(itemId, qty) {
+    addToCartItemClicked(itemId, qty, itemName) {
         console.log(localStorage.getItem("sessionId"));
         if (localStorage.getItem("sessionId") != null) {
             ItemDataService.addToCart(itemId, qty);
+            // this.setState({ message: "Item added to cart successfully" });
+            toast.configure();
+            toast.success(`${qty} x "${itemName}" added to cart successfully`, {
+                position: "top-center",
+                autoClose: 2500,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                transition: Slide
+                });
         } else {
             this.props.history.push('/login');
         }
@@ -43,7 +59,23 @@ class ItemRow extends Component {
                 <td>{this.props.item.stock}</td>
                 <td><input type="number" value={this.state.qty} onChange={this.handleQtyChange}></input></td>
                 <td>{Math.round((this.props.item.price * this.state.qty + Number.EPSILON) * 100)/100}</td>
-                <td><button className="btn btn-success" onClick={() => this.addToCartItemClicked(this.props.item.itemId, this.state.qty)}>Add To Cart</button></td>
+                {/* <td><Notify/></td> */}
+                <td>
+                <button className="btn btn-success" onClick={() => this.addToCartItemClicked(this.props.item.itemId, this.state.qty, this.props.item.itemName)}>
+                Add <i class="fa fa-cart-plus" aria-hidden="true"></i></button></td>
+                {/* {this.state.message && <div class="alert alert-success">{this.state.message}</div>} */}
+                {/* {this.state.message && <ToastContainer
+position="top-center"
+autoClose={1500}
+hideProgressBar
+newestOnTop={false}
+closeOnClick
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+message="Test"
+/>} */}
             </tr>
         )
     }

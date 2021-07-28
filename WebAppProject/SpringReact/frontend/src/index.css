@@ -12,3 +12,20 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.Toastify__toast-body {
+  white-space: pre-line;
+}
+/* .form-control {
+  width:20px;
+} */
+
+@font-face {
+  font-family: 'Starjedi';
+  src: local('Starjedi'), url(./fonts/Starjedi.ttf) format('truetype');
+  /* other formats include: 'woff2', 'truetype, 'opentype',
+                            'embedded-opentype', and 'svg' */
+}
+
+.font-face-gm {
+  font-family: "Starjedi";
+ }
