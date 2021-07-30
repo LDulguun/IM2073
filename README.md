@@ -5,7 +5,9 @@ Introduction to Design and Project module mini-projects. There are 2 projects in
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/4GhaQptEEUo/0.jpg)](https://www.youtube.com/watch?v=4GhaQptEEUo)
 
 ## Spring React App
-[https://im2073-eshop.herokuapp.com](https://im2073-eshop.herokuapp.com)
+:arrow_right::arrow_right::arrow_right:   [https://im2073-eshop.herokuapp.com](https://im2073-eshop.herokuapp.com)
+
+![Screenshot](https://github.com/LDulguun/IM2073/blob/master/eshop-demo.gif)
 
 ### Architecture
 ![Screenshot](https://i.imgur.com/DdrVw2F.png)
