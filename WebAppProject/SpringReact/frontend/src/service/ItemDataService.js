@@ -2,16 +2,22 @@
 //note the get and post requests
 import axios from 'axios'
 
-const ESHOP_API_URL = 'http://localhost:8080/api'
+const ESHOP_API_URL = 'https://starwars-eshop-backend.onrender.com/api'
 
 class ItemDataService {
 
     retrieveAllItems() {
         return axios.get(`${ESHOP_API_URL}/search`);
     }
-
+    // searchItems(keyword) {
+    //     return axios.get(`${ESHOP_API_URL}/search/${keyword}`);
+    // }
     searchItems(keyword) {
-        return axios.get(`${ESHOP_API_URL}/search/${keyword}`);
+        return new Promise((resolve, reject) => {
+            axios.get(`${ESHOP_API_URL}/search/${keyword}`)
+                .then(response => resolve(response))
+                .catch(error => reject(error))
+        });
     }
 
     retrieveCart() {
@@ -24,7 +30,7 @@ class ItemDataService {
     }
 
     addToCart(itemId, qty) {
-        console.log('executed service' + itemId + qty )
+        console.log('executed service' + itemId + qty)
         return axios.post(`${ESHOP_API_URL}/${localStorage.getItem("sessionId")}/cart/add/${itemId}/${qty}`);
     }
 

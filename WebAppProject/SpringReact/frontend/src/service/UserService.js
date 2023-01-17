@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const ESHOP_API_URL = 'http://localhost:8080/api'
+const ESHOP_API_URL = 'https://starwars-eshop-backend.onrender.com/api'
 
 class UserService {
 

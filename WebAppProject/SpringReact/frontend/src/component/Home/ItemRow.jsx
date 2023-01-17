@@ -55,10 +55,10 @@ class ItemRow extends Component {
             <tr key={this.props.item.itemId}>
                 <td>{this.props.item.itemId}</td>
                 <td>{this.props.item.itemName}</td>
-                <td>{this.props.item.price}</td>
-                <td>{this.props.item.stock}</td>
-                <td><input type="number" value={this.state.qty} onChange={this.handleQtyChange}></input></td>
-                <td>{Math.round((this.props.item.price * this.state.qty + Number.EPSILON) * 100)/100}</td>
+                <td>${this.props.item.price.toFixed(2)}</td>
+                <td>x{this.props.item.stock}</td>
+                <td style={{width: 5}}><input style={{width: 50}} type="number" value={this.state.qty} onChange={this.handleQtyChange}></input></td>
+                <td>${(Math.round((this.props.item.price * this.state.qty + Number.EPSILON) * 100)/100).toFixed(2)}</td>
                 {/* <td><Notify/></td> */}
                 <td>
                 <button className="btn btn-success" onClick={() => this.addToCartItemClicked(this.props.item.itemId, this.state.qty, this.props.item.itemName)}>
